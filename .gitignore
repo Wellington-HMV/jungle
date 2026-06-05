@@ -1,0 +1,12 @@
+# Logs / temporários
+*.log
+*.tmp
+
+# Backups gerados por edições
+*.original.md
+*.bak
+
+# Específicos do SO
+Thumbs.db
+desktop.ini
+.DS_Store
