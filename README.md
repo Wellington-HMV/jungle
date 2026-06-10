@@ -1,5 +1,11 @@
 # 🌴 Jungle
 
+[![Website](https://img.shields.io/badge/🌐_Website-jungle-3ddc84?style=flat-square)](https://wellington-hmv.github.io/jungle/)
+[![Release](https://img.shields.io/github/v/release/Wellington-HMV/jungle?style=flat-square&color=2bb673)](https://github.com/Wellington-HMV/jungle/releases/latest)
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?style=flat-square&logo=powershell&logoColor=white)](https://github.com/Wellington-HMV/jungle)
+[![Platform](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/Wellington-HMV/jungle)
+[![License](https://img.shields.io/github/license/Wellington-HMV/jungle?style=flat-square&color=lightgrey)](LICENSE)
+
 > Mantenha seu Windows **ativo** e seu status do Teams/Slack **verde** — sem mover o cursor, sem instalar nada, direto da bandeja.
 
 **Jungle** é um *keep-alive* / *jiggler* leve escrito em PowerShell puro. Ele emite um pulso de atividade de input em intervalos configuráveis, impedindo o computador de ficar ocioso, a tela de apagar e o seu status de presença de virar "Ausente" — tudo dentro de uma janela de horário que você define (ex.: dias úteis, das 9h às 18h).
