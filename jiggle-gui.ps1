@@ -66,18 +66,19 @@ function New-StatusIcon([string]$state) {
 }
 
 $startupLnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'JungleJiggler.lnk'
-$selfPath   = Join-Path $PSScriptRoot 'jiggle-gui.ps1'
+$watchdog   = Join-Path $PSScriptRoot 'watchdog.ps1'
 $psExe      = (Get-Process -Id $PID).Path
 
 function Test-Autostart { Test-Path $startupLnk }
 function Set-Autostart([bool]$enable) {
     if ($enable) {
+        # boot aponta pro watchdog (logon + self-heal). Watchdog relanca o app se morrer.
         $ws = New-Object -ComObject WScript.Shell
         $lnk = $ws.CreateShortcut($startupLnk)
         $lnk.TargetPath = $psExe
-        $lnk.Arguments  = "-NoProfile -WindowStyle Minimized -File ""$selfPath"" -Tray"
+        $lnk.Arguments  = "-NoProfile -WindowStyle Minimized -File ""$watchdog"""
         $lnk.WorkingDirectory = $PSScriptRoot
-        $lnk.Description = "Jungle Mouse Jiggler"
+        $lnk.Description = "Jungle Watchdog (mantem o jiggler vivo)"
         $lnk.Save()
     } elseif (Test-Path $startupLnk) {
         Remove-Item $startupLnk -Force
@@ -129,22 +130,22 @@ $lblInfo.ForeColor = [System.Drawing.Color]::Gray
 $form.Controls.Add($lblInfo)
 
 # ---- tray ----
-$tray = New-Object System.Windows.Forms.NotifyIcon
-$tray.Visible = $true
+$trayIcon = New-Object System.Windows.Forms.NotifyIcon
+$trayIcon.Visible = $true
 
 function Update-UI {
     if (-not $script:active) {
         $lblStatus.Text = "PARADO"; $lblStatus.ForeColor = [System.Drawing.Color]::Gray
-        $btn.Text = "Ativar"; $tray.Text = "Jungle - parado"
-        $tray.Icon = New-StatusIcon 'off'
+        $btn.Text = "Ativar"; $trayIcon.Text = "Jungle - parado"
+        $trayIcon.Icon = New-StatusIcon 'off'
     } elseif (In-Window) {
         $lblStatus.Text = "ATIVO"; $lblStatus.ForeColor = [System.Drawing.Color]::LimeGreen
-        $btn.Text = "Desativar"; $tray.Text = "Jungle - ATIVO (na janela)"
-        $tray.Icon = New-StatusIcon 'on'
+        $btn.Text = "Desativar"; $trayIcon.Text = "Jungle - ATIVO (na janela)"
+        $trayIcon.Icon = New-StatusIcon 'on'
     } else {
         $lblStatus.Text = "AGUARDANDO"; $lblStatus.ForeColor = [System.Drawing.Color]::Goldenrod
-        $btn.Text = "Desativar"; $tray.Text = "Jungle - aguardando janela ${StartHour}h-${EndHour}h"
-        $tray.Icon = New-StatusIcon 'wait'
+        $btn.Text = "Desativar"; $trayIcon.Text = "Jungle - aguardando janela ${StartHour}h-${EndHour}h"
+        $trayIcon.Icon = New-StatusIcon 'wait'
     }
 }
 
@@ -188,7 +189,7 @@ $miOpen = $menu.Items.Add("Abrir")
 $miToggle = $menu.Items.Add("Ativar / Desativar")
 $null = $menu.Items.Add("-")
 $miExit = $menu.Items.Add("Sair")
-$tray.ContextMenuStrip = $menu
+$trayIcon.ContextMenuStrip = $menu
 
 function Show-Window {
     $form.Show(); $form.WindowState = 'Normal'; $form.Activate(); $form.BringToFront()
@@ -198,18 +199,18 @@ $miToggle.Add_Click({ Set-Active (-not $script:active) })
 $miExit.Add_Click({
     $timer.Stop(); $clock.Stop()
     [Nat]::SetThreadExecutionState($ES_RELEASE) | Out-Null
-    $tray.Visible = $false
+    $trayIcon.Visible = $false
     $form.Dispose()
     [System.Windows.Forms.Application]::Exit()
 })
-$tray.Add_DoubleClick({ Show-Window })
+$trayIcon.Add_DoubleClick({ Show-Window })
 
 $form.Add_FormClosing({
     param($s,$e)
     if ($e.CloseReason -eq 'UserClosing') {
         $e.Cancel = $true
         $form.Hide()
-        $tray.ShowBalloonTip(1500, "Jungle Jiggler", "Rodando na bandeja.", 'Info')
+        $trayIcon.ShowBalloonTip(1500, "Jungle Jiggler", "Rodando na bandeja.", 'Info')
     }
 })
 

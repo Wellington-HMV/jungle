@@ -112,11 +112,18 @@ Para remover, basta desmarcar a caixa.
 ```
 jungle/
 ├── jiggle-gui.ps1      # App principal (GUI + bandeja + janela de horário)
+├── watchdog.ps1        # Mantém o app vivo (self-heal sem admin)
 ├── jiggle.ps1          # Versão CLI mínima (anti-lock por linha de comando)
 ├── jiggle.bat          # Atalho 1-clique para a versão CLI
-├── stop-jiggle.bat     # Encerra instâncias em execução
+├── stop-jiggle.bat     # Encerra tudo (watchdog + app)
 └── README.md
 ```
+
+### 🩺 Auto-recuperação (watchdog)
+
+Quando você marca **“Iniciar com o Windows”**, o atalho aponta para o `watchdog.ps1`, um laço leve que sobe no logon e, a cada 5 minutos, verifica se o app está vivo (via mutex nomeado) — relançando-o caso tenha sido encerrado ou travado. Útil em ambientes **sem permissão de administrador**, onde o Agendador de Tarefas é bloqueado.
+
+Para parar tudo de uma vez (watchdog **e** app), use `stop-jiggle.bat` — senão o watchdog reabre o app.
 
 ---
 
