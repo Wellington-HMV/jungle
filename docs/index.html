@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🌴 Jungle — mantenha o Windows ativo e o Teams verde</title>
+<meta name="description" content="Jiggler leve em PowerShell: mantém o Windows ativo e o status do Teams/Slack verde, sem mover o cursor, sem instalar nada, sem admin." />
+<meta property="og:title" content="🌴 Jungle" />
+<meta property="og:description" content="Mantenha o Windows ativo e o Teams/Slack verde — sem mover o cursor, direto da bandeja." />
+<meta property="og:type" content="website" />
+<style>
+  :root{
+    --bg:#0a1410; --bg2:#0f1d17; --card:#13241c; --line:#1f3a2c;
+    --green:#3ddc84; --green2:#2bb673; --gold:#e0b341; --gray:#9fb3a8;
+    --text:#e8f3ed; --muted:#9fb3a8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#143025 0%,var(--bg) 55%);
+    color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--green);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px}
+  header{text-align:center;padding:80px 20px 40px}
+  .logo{font-size:80px;line-height:1;filter:drop-shadow(0 6px 18px rgba(61,220,132,.35))}
+  h1{font-size:clamp(34px,6vw,56px);margin:14px 0 6px;letter-spacing:-1px}
+  .tag{font-size:clamp(16px,2.5vw,20px);color:var(--muted);max-width:620px;margin:0 auto 28px}
+  .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;
+    font-weight:700;font-size:16px;transition:.15s;border:1px solid transparent;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--green),var(--green2));color:#06140d}
+  .btn-primary:hover{transform:translateY(-2px);text-decoration:none;box-shadow:0 8px 22px rgba(61,220,132,.3)}
+  .btn-ghost{border-color:var(--line);color:var(--text);background:var(--card)}
+  .btn-ghost:hover{border-color:var(--green);text-decoration:none}
+  section{padding:30px 0}
+  h2{font-size:26px;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .card h3{font-size:17px;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:15px}
+  .ico{font-size:26px;display:block;margin-bottom:10px}
+  pre{
+    background:#08120d;border:1px solid var(--line);border-radius:12px;padding:18px;
+    overflow-x:auto;font-size:14px;color:#cfe9da;font-family:'Cascadia Code',Consolas,monospace;
+  }
+  .code-comment{color:#5f8a73}
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden}
+  th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:15px}
+  th{background:#0f1d17;color:var(--green)}
+  td:first-child{font-weight:600}
+  .pill{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .p-green{background:var(--green)} .p-gold{background:var(--gold)} .p-gray{background:var(--gray)}
+  .note{background:#1c160a;border:1px solid #4a3a14;border-radius:12px;padding:16px 18px;color:#e8d9a8;font-size:14px}
+  .steps{counter-reset:s;list-style:none;display:grid;gap:12px}
+  .steps li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px 14px 52px;position:relative}
+  .steps li::before{
+    counter-increment:s;content:counter(s);position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:26px;height:26px;border-radius:50%;background:var(--green);color:#06140d;font-weight:700;
+    display:flex;align-items:center;justify-content:center;font-size:14px;
+  }
+  footer{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">🌴</div>
+    <h1>Jungle</h1>
+    <p class="tag">Mantenha o <b>Windows ativo</b> e o status do <b>Teams/Slack verde</b> — sem mover o cursor, sem instalar nada, sem admin.</p>
+    <div class="btns">
+      <a class="btn btn-primary" href="https://github.com/Wellington-HMV/jungle">⬇️ Baixar no GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/Wellington-HMV/jungle/releases/latest">📦 Última release</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>✨ Recursos</h2>
+    <div class="grid">
+      <div class="card"><span class="ico">🟢</span><h3>Status sempre verde</h3><p>Reseta o idle timer real do Windows — Teams, Slack e cia. continuam disponíveis.</p></div>
+      <div class="card"><span class="ico">🖱️</span><h3>Não move o cursor</h3><p>Pulso relativo (0,0): registra atividade sem mexer no seu mouse.</p></div>
+      <div class="card"><span class="ico">💤</span><h3>Tela não apaga</h3><p>Impede sleep e desligamento do monitor via API oficial de energia.</p></div>
+      <div class="card"><span class="ico">🕘</span><h3>Janela de horário</h3><p>Pulsa só nos dias e horas que você definir. Padrão: Seg–Sex, 9h–18h.</p></div>
+      <div class="card"><span class="ico">📌</span><h3>Ícone na bandeja</h3><p>Status colorido e ligar/desligar em um clique. Fecha pra bandeja.</p></div>
+      <div class="card"><span class="ico">🩺</span><h3>Auto-recuperação</h3><p>Watchdog relança o app se ele cair — sem precisar de administrador.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>🚀 Como usar</h2>
+    <ol class="steps">
+      <li>Baixe ou clone o repositório.</li>
+      <li>Rode o app na pasta do projeto:</li>
+    </ol>
+    <pre><span class="code-comment"># abre a janela e o ícone na bandeja</span>
+powershell -NoProfile -File .\jiggle-gui.ps1</pre>
+    <ol class="steps" start="3" style="counter-reset:s 2">
+      <li>Marque <b>“Iniciar com o Windows”</b> para subir sozinho no logon.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>🚦 Estados</h2>
+    <table>
+      <tr><th>Status</th><th>Quando</th></tr>
+      <tr><td><span class="pill p-green"></span>ATIVO</td><td>Dentro da janela de horário, pulsando</td></tr>
+      <tr><td><span class="pill p-gold"></span>AGUARDANDO</td><td>Fora do horário / fim de semana</td></tr>
+      <tr><td><span class="pill p-gray"></span>PARADO</td><td>Desativado manualmente</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>🔬 Como funciona</h2>
+    <p style="color:var(--muted);margin-bottom:14px">A presença e o bloqueio de tela são governados pelo <b>idle timer</b> do Windows. O detalhe importante:</p>
+    <pre>SetCursorPos(x, y)                <span class="code-comment">→ move o cursor, mas NÃO reseta o idle  ❌</span>
+mouse_event(MOUSEEVENTF_MOVE,0,0) <span class="code-comment">→ registra input, reseta o idle      ✅</span></pre>
+    <p style="color:var(--muted);margin-top:14px">O Jungle usa <code>mouse_event</code> com deslocamento <code>(0,0)</code>: o Windows conta como atividade (status verde, tela acesa) <b>sem mover o cursor</b>. Em paralelo, <code>SetThreadExecutionState</code> impede sleep.</p>
+  </section>
+
+  <section>
+    <h2>🛡️ Antivírus &amp; uso consciente</h2>
+    <div class="note">
+      Ferramentas que sintetizam input acionam heurísticas de antivírus/EDR — é esperado. O Jungle é transparente (um <code>.ps1</code> auditável, sem lançadores ocultos), mas pode ser sinalizado em ambientes gerenciados. <b>Não tente burlar o antivírus corporativo</b> — fale com seu time de TI. E usar para simular presença quando você não está de fato trabalhando pode violar a política da empresa. Use por sua conta e risco.
+    </div>
+  </section>
+
+  <footer>
+    Feito com 🌴 · <a href="https://github.com/Wellington-HMV/jungle">Código no GitHub</a> · Licença MIT
+  </footer>
+
+</div>
+</body>
+</html>
