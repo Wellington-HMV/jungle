@@ -67,7 +67,19 @@ function New-StatusIcon([string]$state) {
 
 $startupLnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'JungleJiggler.lnk'
 $watchdog   = Join-Path $PSScriptRoot 'watchdog.ps1'
-$psExe      = (Get-Process -Id $PID).Path
+
+# Caminho estavel do host PS para o atalho de logon. (Get-Process).Path do
+# processo atual captura a pasta versionada da Store (ex.: ...PowerShell_7.6.2.0_x64...),
+# que quebra quando o PowerShell atualiza. Preferir aliases imunes a versao.
+function Resolve-StablePsExe {
+    $candidates = @(
+        (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\pwsh.exe'),
+        (Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe')
+    )
+    foreach ($c in $candidates) { if (Test-Path $c) { return $c } }
+    return (Get-Process -Id $PID).Path
+}
+$psExe = Resolve-StablePsExe
 
 function Test-Autostart { Test-Path $startupLnk }
 function Set-Autostart([bool]$enable) {
